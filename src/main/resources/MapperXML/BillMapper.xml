@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.newSSM.dao.BillMapper">
+
+    <resultMap id="show" type="Bill">
+        <id column="id" property="id"/>
+        <result column="billCode" property="billCode"/>
+        <result column="productName" property="productName"/>
+        <result column="totalPrice" property="totalPrice"/>
+        <result column="isPayment" property="isPayment"/>
+        <result column="creationDate" property="creationDate"/>
+        <association property="providerName" javaType="Provider">
+            <result column="proName" property="proName"/>
+        </association>
+    </resultMap>
+
+    <select id="selectBillById" resultType="Bill">
+        select * from smbms_bill where id = ${id}
+    </select>
+
+    <insert id="insertBill" parameterType="Bill">
+        insert into smbms_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="billCode != null">
+                billCode,
+            </if>
+        </trim>
+        <trim prefix="value (" suffix=")" suffixOverrides=",">
+            <if test="billCode != null">
+                '${billCode}',
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateBillById" parameterType="Bill">
+        update smbms_bill set billCode = '${billCode}' where id = ${id}
+    </update>
+
+    <delete id="deleteBillById">
+        delete from smbms_bill where id = ${id}
+    </delete>
+
+    <select id="selectAllBill" resultType="Bill">
+        select * from smbms_bill
+    </select>
+
+    <select id="getBillByNameIdPay" resultType="Bill" parameterType="Map">
+        select * from smbms_bill where productName like concat('%',#{productName},'%') and providerId = #{providerId} and isPayment = #{isPayment}
+    </select>
+
+    <select id="showBillAndProvider" resultMap="show" parameterType="Map">
+        select billCode , productName , totalPrice , isPayment , b.creationDate , p.proName from smbms_bill b , smbms_provider p
+        where b.providerId = p.id and b.productName like concat('%',#{productName},'%') and b.providerId = #{providerId} and b.isPayment = #{isPayment}
+    </select>
+
+    <select id="dynamicGetBill" resultType="Bill">
+        select b.id, billCode , productName ,b.providerId , p.proName , totalPrice , isPayment , b.creationDate from smbms_bill b , smbms_provider p
+            where 1=1
+                <if test="productName != null">
+                    and productName like concat('%',#{productName},'%')
+                </if>
+                <if test="providerId != 0">
+                    and b.providerId = #{providerId}
+                </if>
+                <if test="isPayment != 0">
+                    and isPayment =#{isPayment}
+                </if>
+                and b.providerId = p.id
+    </select>
+
+    <select id="selectCountAll" resultType="int">
+        select count(1)from smbms_bill id;
+    </select>
+
+    <select id="selectByPage" resultType="Bill">
+        select * from smbms_bill
+        order by creationDate
+        <if test="start != null and size != null">
+            limit #{start}, #{size}
+        </if>
+    </select>
+
+</mapper>

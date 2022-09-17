@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <import resource="spring-consoleBeans.xml"/>
+    <import resource="spring-web.xml"/>
+    <context:property-placeholder location="classpath:smbmsdb.properties" ignore-unresolvable="true"/>
+    <!--数据源配置-->
+    <bean id="dateSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${dri}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${usn}"/>
+        <property name="password" value="${pwd}"/>
+    </bean>
+    <!--MyBatis：MapperXML文件映射-->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dateSource"/>
+        <property name="mapperLocations">
+            <list>
+                <value>classpath:MapperXML/*</value>
+            </list>
+        </property>
+        <!--mybatis：配置文件-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+    <!--Mapper接口映射-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.newSSM.dao"/>
+    </bean>
+    <!--事务管理-->
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="txManager">
+        <property name="dataSource" ref="dateSource"/>
+    </bean>
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="get*" timeout="1" read-only="true"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+    <!--AOP配置-->
+    <aop:config>
+        <aop:pointcut id="allServiceImplMethod" expression="execution(* com.newSSM.service.impl..*(..))"/>
+        <aop:advisor pointcut-ref="allServiceImplMethod" advice-ref="txAdvice" />
+    </aop:config>
+</beans>

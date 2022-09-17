@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.newSSM.dao.UserMapper">
+
+    <update id="modifyUserName">
+        update smbms_user set userName = '${userName}' where id = ${id}
+    </update>
+
+    <update id="modifyUserPassword">
+        update smbms_user set userPassword = '${userPassword}' where id = ${id}
+    </update>
+
+    <delete id="deleteAUser">
+        delete from smbms_user where id = ${id}
+    </delete>
+
+</mapper>

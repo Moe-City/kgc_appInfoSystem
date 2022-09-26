@@ -1,6 +1,7 @@
 package com.newSSM.service.impl;
 
 import com.newSSM.dao.UserMapper;
+import com.newSSM.pojo.User;
 import com.newSSM.service.UserService;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,11 @@ import javax.annotation.Resource;
 public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
+
+    @Override
+    public User getUserByName(String userName) {
+        return userMapper.getUserByName(userName);
+    }
 
     @Override
     public int modifyUserName(@Param("userName")String userName, @Param("id")int id) {

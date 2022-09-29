@@ -4,14 +4,18 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 
-    <properties resource="smbmsdb.properties"/>
+    <properties resource="appInfoSystemDB.properties"/>
 
     <typeAliases>
-        <package name="com.newSSM.pojo"/>
+        <package name="com.appInfoSystem.pojo"/>
     </typeAliases>
 
-    <environments default="ENV">
+    <plugins>
+        <!--设置分页插件-->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
 
+    <environments default="ENV">
         <environment id="ENV">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
@@ -21,11 +25,10 @@
                 <property name="password" value="${pwd}"/>
             </dataSource>
         </environment>
-
     </environments>
 
     <mappers>
-        <!--<package name="com.newSSM.dao"/>-->
+        <!--<package name="com.appInfoSystem.dao"/>-->
     </mappers>
 
 </configuration>

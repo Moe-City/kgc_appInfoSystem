@@ -3,11 +3,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
-
-    <import resource="spring-consoleBeans.xml"/>
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
     <import resource="spring-web.xml"/>
-    <context:property-placeholder location="classpath:smbmsdb.properties" ignore-unresolvable="true"/>
+    <context:property-placeholder location="classpath:appInfoSystemDB.properties" ignore-unresolvable="true"/>
+    <context:component-scan base-package="com.appInfoSystem.service"/>
     <!--数据源配置-->
     <bean id="dateSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="${dri}"/>
@@ -28,7 +31,7 @@
     </bean>
     <!--Mapper接口映射-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.newSSM.dao"/>
+        <property name="basePackage" value="com.appInfoSystem.dao"/>
     </bean>
     <!--事务管理-->
     <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="txManager">
@@ -42,7 +45,7 @@
     </tx:advice>
     <!--AOP配置-->
     <aop:config>
-        <aop:pointcut id="allServiceImplMethod" expression="execution(* com.newSSM.service.impl..*(..))"/>
+        <aop:pointcut id="allServiceImplMethod" expression="execution(* com.appInfoSystem.service.impl..*(..))"/>
         <aop:advisor pointcut-ref="allServiceImplMethod" advice-ref="txAdvice" />
     </aop:config>
 </beans>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="smbmsdb@localhost" uuid="3aa76637-3549-4a51-a52c-a19d64ce39e7">
+    <data-source source="LOCAL" name="appinfodb@localhost" uuid="3aa76637-3549-4a51-a52c-a19d64ce39e7">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/smbmsdb</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3306/appinfodb</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

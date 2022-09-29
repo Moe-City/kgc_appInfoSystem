@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="newSSM" />
+        <module name="appInfoSystem" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="newSSM" target="8" />
+      <module name="appInfoSystem" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

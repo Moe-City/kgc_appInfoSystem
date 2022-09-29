@@ -8,12 +8,23 @@
        http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
-
+    <!--自动管理资源文件避免被拦截-->
+    <mvc:default-servlet-handler />
+    <!--URL映射-->
     <bean id="viewResolver"
           class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="jsp/" />
+        <property name="prefix" value="/WEB-INF/jsp/" />
         <property name="suffix" value=".jsp" />
     </bean>
-    <context:component-scan base-package="com.newSSM.controller"/>
+    <!--控制器包扫描和启用注解-->
+    <context:component-scan base-package="com.appInfoSystem.controller"/>
     <mvc:annotation-driven />
+    <!--拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 配置拦截器作用的路径 -->
+            <mvc:mapping path="/**" />
+            <bean class="com.appInfoSystem.util.userInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>

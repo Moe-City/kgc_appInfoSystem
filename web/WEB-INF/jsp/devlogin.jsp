@@ -18,7 +18,7 @@
     <!-- NProgress -->
     <link href="${pageContext.request.contextPath }/statics/css/nprogress.css" rel="stylesheet">
     <!-- Animate.css -->
-    <link href="https://colorlib.com/polygon/gentelella/css/animate.min.css" rel="stylesheet">
+    <%--<link href="https://colorlib.com/polygon/gentelella/css/animate.min.css" rel="stylesheet">--%>
 
     <!-- Custom Theme Style -->
     <link href="${pageContext.request.contextPath }/statics/css/custom.min.css" rel="stylesheet">

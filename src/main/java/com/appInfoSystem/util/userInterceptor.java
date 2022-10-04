@@ -9,16 +9,22 @@ import javax.servlet.http.HttpSession;
 public class userInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        /*String url = request.getRequestURI();// 获取请求的URL
-        System.out.println(url);
+        /*获取请求的URL，允许错误页面和登录页面*/
+        String url = request.getRequestURI();
         if (url.contains("/dologin") || url.contains("/login") || url.contains("/logout") || url.contains("403.jsp")) {
             return true;
         }
+        /*获取session，阻止未登录*/
         HttpSession session = request.getSession();
-        Object obj = session.getAttribute("userSession");
-        if (obj != null)
+        Object userSession = session.getAttribute("userSession");
+        Object devUserSession = session.getAttribute("devUserSession");
+        if (userSession != null && url.contains("/manage"))
             return true;
-        request.getRequestDispatcher("/403.jsp").forward(request, response);
-        return false;*/return true;
+        else if (devUserSession != null && url.contains("/dev"))
+            return true;
+        else {
+            request.getRequestDispatcher("/403.jsp").forward(request, response);
+            return false;
+        }
     }
 }

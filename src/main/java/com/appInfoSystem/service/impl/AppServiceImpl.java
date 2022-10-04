@@ -18,8 +18,13 @@ public class AppServiceImpl implements AppService {
     private AppMapper appMapper;
 
     @Override
-    public List<dataDictionary> selectPlatformDict() {
-        return appMapper.selectPlatformDict();
+    public List<dataDictionary> selectPlatformDictFlatForm() {
+        return appMapper.selectPlatformDictFlatForm();
+    }
+
+    @Override
+    public List<dataDictionary> selectPlatformDictStatus() {
+        return appMapper.selectPlatformDictStatus();
     }
 
     @Override
@@ -58,27 +63,6 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public PageBean<appInfo> appInfoPageBean(int pageNow, int pageSize, Map<String, Object> map){
-        PageBean<appInfo> pageBean = new PageBean<>();
-        pageBean.setCurrentPageNo(pageNow);
-        pageBean.setPageSize(pageSize);
-        int count = appMapper.paramSearchApp(map).size();
-        map.put("start",(pageNow-1)*pageSize);
-        map.put("size",pageSize);
-        pageBean.setTotalCount(count);
-        int pages = count/pageSize;
-        if (count%pageSize!=0)
-            pages+=1;
-        pageBean.setTotalPageCount(pages);
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println(map);
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        List <appInfo> list = appMapper.paramSearchApp(map);
-        pageBean.setList(list);
-        return pageBean;
-    }
-
-    @Override
     public String getFlatformNameById(int id) {
         return appMapper.getFlatformNameById(id);
     }
@@ -96,6 +80,71 @@ public class AppServiceImpl implements AppService {
     @Override
     public appVersion simpleGetVersion(int id) {
         return appMapper.simpleGetVersion(id);
+    }
+
+    @Override
+    public int checkAppName(String APKName) {
+        return appMapper.checkAppName(APKName);
+    }
+
+    @Override
+    public int addApp(Map map) {
+        return appMapper.addApp(map);
+    }
+
+    @Override
+    public int modifyApp(Map map) {
+        return appMapper.modifyApp(map);
+    }
+
+    @Override
+    public List<appVersion> getAppVersionList(int appId) {
+        return appMapper.getAppVersionList(appId);
+    }
+
+    @Override
+    public String getPublishStatusName(int valueId) {
+        return appMapper.getPublishStatusName(valueId);
+    }
+
+    @Override
+    public String getAppName(int id) {
+        return appMapper.getAppName(id);
+    }
+
+    @Override
+    public int addAppVersion(Map map) {
+        return appMapper.addAppVersion(map);
+    }
+
+    @Override
+    public int getLatestVersion(int appId) {
+        return appMapper.getLatestVersion(appId);
+    }
+
+    @Override
+    public int updateAppVersionId(Map map) {
+        return appMapper.updateAppVersionId(map);
+    }
+
+    @Override
+    public int updateAppVersion(Map map) {
+        return appMapper.updateAppVersion(map);
+    }
+
+    @Override
+    public int deleteAppInfo(int id) {
+        return appMapper.deleteAppInfo(id);
+    }
+
+    @Override
+    public int deleteAppVersion(int appId) {
+        return appMapper.deleteAppVersion(appId);
+    }
+
+    @Override
+    public int devChangeAppPublishStatus(Map map) {
+        return appMapper.devChangeAppPublishStatus(map);
     }
 
     @Override

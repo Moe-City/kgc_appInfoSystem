@@ -87,7 +87,7 @@
             </label>
             <div class="col-md-6 col-sm-6 col-xs-12">
             	<input type="text" class="form-control col-md-7 col-xs-12" 
-              	value="${appInfo.statusName}" readonly="readonly">
+              	value="${appInfo.statusName}" readonly="readonly" >
             </div>
           </div>
           <div class="item form-group">
@@ -185,7 +185,7 @@
     </div>
      <div class="form-group">
         <div class="col-md-6 col-md-offset-3">
-          <button type="button" class="btn btn-primary" id="back">返回</button>
+          <button type="button" class="btn btn-primary" id="back" onclick="window.history.back()">返回</button>
         </div>
       </div>
     <div class="clearfix"></div>

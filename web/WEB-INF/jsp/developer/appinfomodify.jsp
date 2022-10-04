@@ -72,7 +72,15 @@
             <label class="control-label col-md-3 col-sm-3 col-xs-12"  for="select">所属平台 <span class="required">*</span></label>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <input type="hidden" value="${appInfo.flatformId}" id="fid" />
-              <select name="flatformId" id="flatformId" class="form-control" required="required"></select>
+              <select name="flatformId" id="flatformId" class="form-control" required="required">
+                <c:if test="${flatFormList != null }">
+                  <option value="" selected>--请选择--</option>
+                  <c:forEach var="dataDictionary" items="${flatFormList}">
+                    <option <c:if test="${dataDictionary.valueId == flatformId }">selected="selected"</c:if>
+                            value="${dataDictionary.valueId}">${dataDictionary.valueName}</option>
+                  </c:forEach>
+                </c:if>
+              </select>
             </div>
           </div>
           
@@ -80,7 +88,15 @@
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="select">一级分类 <span class="required">*</span></label>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <input type="hidden" value="${appInfo.categoryLevel1}" id="cl1" />
-              <select name="categoryLevel1" id="categoryLevel1" class="form-control"  required="required"></select>
+              <select name="categoryLevel1" id="categoryLevel1" class="form-control"  required="required">
+                <c:if test="${categoryLevel1List != null }">
+                  <option value="" selected>--请选择--</option>
+                  <c:forEach var="appCategory" items="${categoryLevel1List}">
+                    <option <c:if test="${appCategory.id == categoryLevel1}">selected="selected"</c:if>
+                            value="${appCategory.id}">${appCategory.categoryName}</option>
+                  </c:forEach>
+                </c:if>
+              </select>
             </div>
           </div>
           
@@ -88,7 +104,15 @@
             <label class="control-label col-md-3 col-sm-3 col-xs-12"  for="select">二级分类 <span class="required">*</span></label>
             <div class="col-md-6 col-sm-6 col-xs-12">
             	<input type="hidden" value="${appInfo.categoryLevel2}" id="cl2" />
-              <select name="categoryLevel2" id="categoryLevel2" class="form-control"  required="required"></select>
+              <select name="categoryLevel2" id="categoryLevel2" class="form-control"  required="required">
+                <c:if test="${categoryLevel2List != null }">
+                  <option value="" selected>--请选择--</option>
+                  <c:forEach var="appCategory" items="${categoryLevel2List}">
+                    <option <c:if test="${appCategory.id == categoryLevel2}">selected="selected"</c:if>
+                            value="${appCategory.id}">${appCategory.categoryName}</option>
+                  </c:forEach>
+                </c:if>
+              </select>
             </div>
           </div>
           
@@ -96,7 +120,15 @@
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="select">三级分类 <span class="required">*</span></label>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <input type="hidden" value="${appInfo.categoryLevel3}" id="cl3" />
-              <select name="categoryLevel3" id="categoryLevel3" class="form-control"  required="required"></select>
+              <select name="categoryLevel3" id="categoryLevel3" class="form-control"  required="required">
+                <c:if test="${categoryLevel3List != null }">
+                  <option value="0" selected>--请选择--</option>
+                  <c:forEach var="appCategory" items="${categoryLevel3List}">
+                    <option <c:if test="${appCategory.id == categoryLevel3}">selected="selected"</c:if>
+                            value="${appCategory.id}">${appCategory.categoryName}</option>
+                  </c:forEach>
+                </c:if>
+              </select>
             </div>
           </div>
           <div class="item form-group">
@@ -122,9 +154,17 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
 				<input type="hidden" id="logoPicPath" name="logoPicPath" value="${appInfo.logoPicPath}"/>
             	<input type="hidden" id="logoLocPath" name="logoLocPath" value="${appInfo.logoLocPath}"/>
-				<div id="uploadfile" style="display: none">
-				<input id="attach"  type="file" class="form-control col-md-7 col-xs-12" name="attach">
-				<p><span style="color:red;font-weight: bold;">*注：1、大小不得超过500k.2、图片格式：jpg、png、jpeg、pneg</span></p>
+				<div id="uploadfile">
+                  <c:choose>
+                    <c:when test="${appInfo.logoPicPath == null || appInfo.logoPicPath == ''}">
+                      暂无
+                    </c:when>
+                    <c:otherwise>
+                      <img src="${appInfo.logoPicPath }?m=1" width="100px;"/>
+                    </c:otherwise>
+                  </c:choose>
+                  <input id="attach"  type="file" class="form-control col-md-7 col-xs-12" name="attach" accept="image/png,image/jpeg">
+				<p><span style="color:red;font-weight: bold;">*注：1、大小不得超过50k.2、图片格式：jpg、png、jpeg、pneg</span></p>
 				</div>
 				<div id="logoFile"></div>
 				${fileUploadError }
@@ -135,8 +175,10 @@
             	<c:if test="${appInfo.status == 3}">
             	 	<button id="send" type="submit" name="status" value="1" class="btn btn-success">保存并再次提交审核</button>
             	</c:if>
-              <button id="send" type="submit" class="btn btn-success">保存</button>
-              <button type="button" class="btn btn-primary" id="back">返回</button>
+                <c:if test="${appInfo.status == 1}">
+                    <button id="send" type="submit" class="btn btn-success">保存</button>
+                </c:if>
+              <button type="button" class="btn btn-primary" id="back" onclick="window.history.back()">返回</button>
               <br/><br/>
             </div>
           </div>
@@ -146,4 +188,86 @@
   </div>
 </div>
 <%@include file="common/footer.jsp"%>
+<script>
+  window.onload = function (){
+    //获取下拉菜单
+    var select1 = document.getElementById("categoryLevel1");
+    var select2 = document.getElementById("categoryLevel2");
+    var select3 = document.getElementById("categoryLevel3");
+    select1.onchange = function(){if (select1.value != '')select1Ajax();}
+    select2.onchange = function(){if (select2.value != '')select2Ajax();}
+    var s1Value = select1.value;
+    var s2Value = select2.value;
+    select2.onclick = function() {
+      var s2Value2 = select2.value;
+      //console.log("原"+s2Value+"现"+s2Value2);
+      if ((s2Value2 != s2Value && s2Value != '') || s2Value2 == '')
+        selectClearChildren(select3);
+    };
+    select1.onclick = function() {
+      var s1Value1 = select1.value;
+      //console.log("原"+s1Value+"现"+s1Value1);
+      if ((s1Value1 != s1Value && s1Value != '') || s1Value1 == ''){
+        selectClearChildren(select2);
+        selectClearChildren(select3);
+      }
+    };
+
+    function select1Ajax(){
+      var options=$("#queryCategoryLevel1 option:selected");//获取第一个下拉菜单的值
+      var ops = document.getElementById("categoryLevel1");
+      //jQuery的ajax内容：
+      $.ajax({
+        contentType:"json",
+        /*data: {"parentId":options.val()},*/
+        data:{"parentId":ops.value},
+        url:"nlc",
+        success:function(data){
+          //根据data的类型决定是否转换成JSON，似乎不用转换（好像自动转好了）
+          var categoryLevel2List = typeof data == 'string'?JSON.parse(data):data;
+          //清空第二个下拉菜单的选项
+          selectClearChildren(select2);
+          //创建选项
+          var element = document.createElement("option");
+          element.innerHTML="--请选择--";
+          element.setAttribute("value","");
+          select2.append(element);
+          for (var i = 0; i < categoryLevel2List.length; i++) {
+            var newEle = document.createElement("option");
+            newEle.innerHTML = categoryLevel2List[i].categoryName;//选项的文本
+            newEle.setAttribute("value",categoryLevel2List[i].id)//选项的value，不要写成id了
+            select2.appendChild(newEle);
+          }
+        }});//下方雷同
+    }
+    function select2Ajax() {
+      var options=$("#categoryLevel2 option:selected");
+      $.ajax({
+        contentType:"json",
+        data: {"parentId":options.val()},
+        url:"nlc",
+        success:function(data){
+          var categoryLevel3List = typeof data == 'string'?JSON.parse(data):data;
+          selectClearChildren(select3);
+          var element = document.createElement("option");
+          element.setAttribute("value","0");
+          element.innerHTML="--请选择--";
+          select3.append(element);
+          for (var i = 0; i < categoryLevel3List.length; i++) {
+            var newEle = document.createElement("option");
+            newEle.innerHTML = categoryLevel3List[i].categoryName;
+            newEle.setAttribute("value",categoryLevel3List[i].id)
+            select3.appendChild(newEle);
+          }
+        }});
+    }
+    function selectClearChildren (select) {
+      var childrens = select.children;
+      if (childrens.length>=1){
+        for (var i = childrens.length-1; i >=0; i--) {
+          select.removeChild((childrens[i]))
+        }}
+    }
+  }
+</script>
 <script src="${pageContext.request.contextPath }/statics/localjs/appinfomodify.js"></script>

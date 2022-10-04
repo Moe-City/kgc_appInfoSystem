@@ -254,6 +254,10 @@
 <script type="text/javascript">
 
 	function checkThis(form, appinfoid, versionid, status, statusname) {
+		if (versionid == 0){
+			window.alert("该APP没有上传最新版本，不能进行审核操作！");
+			return;
+		}
 		var aiid = document.getElementById("formAppinfoid");
 		aiid.value = appinfoid;
 		var vid = document.getElementById("formVersionid");
@@ -272,29 +276,23 @@
 	}
 
 	window.onload = function (){
-		/*//获取后端传输值
-		let querySoftwareName = "[[${querySoftwareName}]]";
-		let queryFlatformId = "[[${queryFlatformId}]]";
-		let queryCategoryLevel1 = "[[${queryCategoryLevel1}]]"
-		let queryCategoryLevel2 = "[[${queryCategoryLevel2}]]"
-		let queryCategoryLevel3 = "[[${queryCategoryLevel3}]]"*/
 		//获取下拉菜单
 		var select1 = document.getElementById("queryCategoryLevel1");
 		var select2 = document.getElementById("queryCategoryLevel2");
 		var select3 = document.getElementById("queryCategoryLevel3");
-		select1.onchange = function(){select1Ajax();}
-		select2.onchange = function(){select2Ajax();}
+		select1.onchange = function(){if (select1.value != '')select1Ajax();}
+		select2.onchange = function(){if (select2.value != '')select2Ajax();}
 		var s1Value = select1.value;
 		var s2Value = select2.value;
 		select2.onclick = function() {
 			var s2Value2 = select2.value;
-			console.log("原"+s2Value+"现"+s2Value2);
+			//console.log("原"+s2Value+"现"+s2Value2);
 			if ((s2Value2 != s2Value && s2Value != '') || s2Value2 == '')
 				selectClearChildren(select3);
 		};
 		select1.onclick = function() {
 			var s1Value1 = select1.value;
-			console.log("原"+s1Value+"现"+s1Value1);
+			//console.log("原"+s1Value+"现"+s1Value1);
 			if ((s1Value1 != s1Value && s1Value != '') || s1Value1 == ''){
 				selectClearChildren(select2);
 				selectClearChildren(select3);
@@ -304,8 +302,6 @@
 		function select1Ajax(){
 			var options=$("#queryCategoryLevel1 option:selected");//获取第一个下拉菜单的值
 			var ops = document.getElementById("queryCategoryLevel1");
-			/*console.log(options.val());
-			console.log(options.text());//浏览器控制台输出*/
 			//jQuery的ajax内容：
 			$.ajax({
 				contentType:"json",
@@ -313,10 +309,6 @@
 				data:{"parentId":ops.value},
 				url:"nextLevelCategory",
 				success:function(data){
-					//将JSON转换为categoryLevel2List?
-					//返回的数据是categoryLevel2List
-					//如何使用categoryLevel2List加载select2?
-					//console.log(data)
 					//根据data的类型决定是否转换成JSON，似乎不用转换（好像自动转好了）
 					var categoryLevel2List = typeof data == 'string'?JSON.parse(data):data;
 					//清空第二个下拉菜单的选项
@@ -336,8 +328,6 @@
 		}
 		function select2Ajax() {
 			var options=$("#queryCategoryLevel2 option:selected");
-			/*console.log(options.val());
-			console.log(options.text());*/
 			$.ajax({
 				contentType:"json",
 				data: {"parentId":options.val()},
@@ -364,28 +354,6 @@
 					select.removeChild((childrens[i]))
 				}}
 		}
-		/*function load (judge){
-			var querySoftwareName = "[[${querySoftwareName}]]";
-			let queryFlatformId = "[[${queryFlatformId}]]";
-			let queryCategoryLevel1 = "[[${queryCategoryLevel1}]]"
-			let queryCategoryLevel2 = "[[${queryCategoryLevel2}]]"
-			let queryCategoryLevel3 = "[[${queryCategoryLevel3}]]"
-			if (judge == 1){
-				var querySoftwareName2=document.getElementById("querySoftwareName");
-				querySoftwareName2.innerHTML=querySoftwareName;
-				$("#queryFlatformId").val(queryFlatformId).attr("selected",true);
-				$("#queryCategoryLevel1").val(queryCategoryLevel1);
-				console.log(querySoftwareName);
-				console.log(queryFlatformId);
-				console.log(queryCategoryLevel1);
-			}else if (judge == 2){
-				$("#queryCategoryLevel2").val(queryCategoryLevel2);
-				console.log(queryCategoryLevel2);
-			}else if(judge == 3){
-				$("#queryCategoryLevel3").val(queryCategoryLevel3);
-				console.log(queryCategoryLevel3);
-			}
-		}*/
 	}
 </script>
 <script src="${pageContext.request.contextPath }/statics/localjs/rollpage.js"></script>

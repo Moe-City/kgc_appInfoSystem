@@ -16,15 +16,6 @@
       <div class="x_content1">
         <form class="form-horizontal form-label-left" action="checksave" method="post">
           <input type="hidden" name="id" value="${appInfo.id}">
-          <%--<label>
-            <input type="hidden" name="pageNum" value="${map.pageNum}"/>
-            <input type="hidden" name="querySoftwareName" value="${map.softwareName}"/>
-            <input type="hidden" name="queryFlatformId" value="${map.flatformId}"/>
-            <input type="hidden" name="queryCategoryLevel1" value="${map.categoryLevel1}"/>
-            <input type="hidden" name="queryCategoryLevel2" value="${map.categoryLevel2}"/>
-            <input type="hidden" name="queryCategoryLevel3" value="${map.categoryLevel3}"/>
-          </label>--%>
-
           <div class="item form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">软件名称 <span class="required">*</span>
             </label>

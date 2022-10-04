@@ -13,7 +13,7 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="x_content">
-				<form method="post" action="list">
+				<form method="post" action="1">
 					<input type="hidden" name="pageIndex" value="1" />
 			    <ul>
 					<li>
@@ -165,7 +165,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="appInfo" items="${appInfoList }" varStatus="status">
+								<c:forEach var="appInfo" items="${pages.list }" varStatus="status">
 									<tr role="row" class="odd">
 										<td tabindex="0" class="sorting_1">${appInfo.softwareName}</td>
 										<td>${appInfo.APKName }</td>
@@ -186,27 +186,28 @@
                       </button>
                       <ul class="dropdown-menu" role="menu">
                         <li>
+							<input type="hidden" id="originalStatusId" value="${appInfo.status}">
                         	<c:choose>
 											<c:when test="${appInfo.status == 2 || appInfo.status == 5}">
-												<a class="saleSwichOpen" saleSwitch="open" appinfoid=${appInfo.id }  appsoftwarename=${appInfo.softwareName } data-toggle="tooltip" data-placement="top" title="" data-original-title="恭喜您，您的审核已经通过，您可以点击上架发布您的APP">上架</a>
+												<a class="saleSwichOpen" saleSwitch="open" appinfoid=${appInfo.id }  appsoftwarename=${appInfo.softwareName } data-toggle="tooltip" data-placement="top" title="" data-original-title="恭喜您，您的审核已经通过，您可以点击上架发布您的APP" onclick='changeAppInfoStatus("${appInfo.id }")' id="changeStatusButton">上架</a>
 											</c:when>
 											<c:when test="${appInfo.status == 4}">
-												<a class="saleSwichClose" saleSwitch="close" appinfoid=${appInfo.id }  appsoftwarename=${appInfo.softwareName } data-toggle="tooltip" data-placement="top" title="" data-original-title="您可以点击下架来停止发布您的APP，市场将不提供APP的下载">下架</a>
+												<a class="saleSwichClose" saleSwitch="close" appinfoid=${appInfo.id }  appsoftwarename=${appInfo.softwareName } data-toggle="tooltip" data-placement="top" title="" data-original-title="您可以点击下架来停止发布您的APP，市场将不提供APP的下载" onclick='changeAppInfoStatus("${appInfo.id }")' id="changeStatusButton">下架</a>
 											</c:when>
 										</c:choose>
                         </li>
-                        <li><a class="addVersion" appinfoid="${appInfo.id }" data-toggle="tooltip" data-placement="top" title="" data-original-title="新增APP版本信息">新增版本</a>
+                        <li><a class="addVersion" appinfoid="${appInfo.id }" data-toggle="tooltip" data-placement="top" title="" data-original-title="新增APP版本信息" onclick='addVersion(document.forms[2],"${appInfo.id }")'>新增版本</a>
                         </li>
                         <li><a class="modifyVersion" 
 											appinfoid="${appInfo.id }" versionid="${appInfo.versionId }" status="${appInfo.status }" 
 											statusname="${appInfo.statusName }"											
-											data-toggle="tooltip" data-placement="top" title="" data-original-title="修改APP最新版本信息">修改版本</a>
+											data-toggle="tooltip" data-placement="top" title="" data-original-title="修改APP最新版本信息" onclick='modifyVersion(document.forms[2],"${appInfo.id }","${appInfo.versionId }","${appInfo.status }","${appInfo.statusName }")'>修改版本</a>
                         </li>
                         <li><a  class="modifyAppInfo" 
 											appinfoid="${appInfo.id }" status="${appInfo.status }" statusname="${appInfo.statusName }"
-											data-toggle="tooltip" data-placement="top" title="" data-original-title="修改APP基础信息">修改</a></li>
-                        <li><a  class="viewApp" appinfoid=${appInfo.id }  data-toggle="tooltip" data-placement="top" title="" data-original-title="查看APP基础信息以及全部版本信息">查看</a></li>
-						<li><a  class="deleteApp" appinfoid=${appInfo.id }  appsoftwarename=${appInfo.softwareName } data-toggle="tooltip" data-placement="top" title="" data-original-title="删除APP基础信息以及全部版本信息">删除</a></li>
+											data-toggle="tooltip" data-placement="top" title="" data-original-title="修改APP基础信息" onclick='modifyApp(document.forms[2],"${appInfo.id }","${appInfo.status}","${appInfo.statusName}")'>修改</a></li>
+                        <li><a  class="viewApp" appinfoid=${appInfo.id }  data-toggle="tooltip" data-placement="top" title="" data-original-title="查看APP基础信息以及全部版本信息" onclick='viewAppInfo(document.forms[2],"${appInfo.id }")'>查看</a></li>
+						<li><a  class="deleteApp" appinfoid=${appInfo.id }  appsoftwarename=${appInfo.softwareName } data-toggle="tooltip" data-placement="top" title="" data-original-title="删除APP基础信息以及全部版本信息" onclick='deleteApp(document.forms[2],"${appInfo.id }")'>删除</a></li>
                       </ul>
                     </div>
 										</td>
@@ -219,33 +220,33 @@
 				<div class="row">
 					<div class="col-sm-5">
 						<div class="dataTables_info" id="datatable-responsive_info"
-							role="status" aria-live="polite">共${pages.totalCount }条记录
-							${pages.currentPageNo }/${pages.totalPageCount }页</div>
+							role="status" aria-live="polite">共${pages.total }条记录
+							${pages.pageNum }/${pages.pages }页</div>
 					</div>
 					<div class="col-sm-7">
 						<div class="dataTables_paginate paging_simple_numbers"
 							id="datatable-responsive_paginate">
 							<ul class="pagination">
-								<c:if test="${pages.currentPageNo > 1}">
+								<c:if test="${pages.pageNum > 1}">
 									<li class="paginate_button previous"><a
-										href="javascript:page_nav(document.forms[0],1);"
+										href="javascript:page_nav(document.forms[1],1);"
 										aria-controls="datatable-responsive" data-dt-idx="0"
 										tabindex="0">首页</a>
 									</li>
 									<li class="paginate_button "><a
-										href="javascript:page_nav(document.forms[0],${pages.currentPageNo-1});"
+										href="javascript:page_nav(document.forms[1],${pages.pageNum-1});"
 										aria-controls="datatable-responsive" data-dt-idx="1"
 										tabindex="0">上一页</a>
 									</li>
 								</c:if>
-								<c:if test="${pages.currentPageNo < pages.totalPageCount }">
+								<c:if test="${pages.pageNum < pages.pages }">
 									<li class="paginate_button "><a
-										href="javascript:page_nav(document.forms[0],${pages.currentPageNo+1 });"
+										href="javascript:page_nav(document.forms[1],${pages.pageNum+1 });"
 										aria-controls="datatable-responsive" data-dt-idx="1"
 										tabindex="0">下一页</a>
 									</li>
 									<li class="paginate_button next"><a
-										href="javascript:page_nav(document.forms[0],${pages.totalPageCount });"
+										href="javascript:page_nav(document.forms[1],${pages.pages });"
 										aria-controls="datatable-responsive" data-dt-idx="7"
 										tabindex="0">最后一页</a>
 									</li>
@@ -260,6 +261,165 @@
 	</div>
 </div>
 </div>
+<form method="post" name="form[1]">
+	<label>
+		<input type="hidden" name="querySoftwareName" value="${querySoftwareName}"/>
+		<input type="hidden" name="queryFlatformId" value="${queryFlatformId}"/>
+		<input type="hidden" name="queryStatus" value="${queryStatus}"/>
+		<input type="hidden" name="queryCategoryLevel1" value="${queryCategoryLevel1}"/>
+		<input type="hidden" name="queryCategoryLevel2" value="${queryCategoryLevel2}"/>
+		<input type="hidden" name="queryCategoryLevel3" value="${queryCategoryLevel3}"/>
+	</label>
+</form>
+<form method="post" name="form[2]">
+	<label>
+		<input type="hidden" name="formId" id="formId"/>
+	</label>
+</form>
 <%@include file="common/footer.jsp"%>
+<script type="text/javascript">
+	function changeAppInfoStatus(id) {
+		var osi = document.getElementById("originalStatusId");
+		$.ajax({
+			contentType:"JSON",
+			data:{"formId":id,"status":osi.value},
+			url:"changeStatus",
+			success(data){
+				var obj = eval( "(" + data + ")" );
+				console.log(obj);
+				document.getElementById("appInfoStatus"+id).innerHTML = obj.statusName;
+				document.getElementById("changeStatusButton").innerHTML = obj.buttonStatusName;
+				osi.value = obj.status;
+			}
+		})
+	}
+	function deleteApp(form, id) {
+		var ID = document.getElementById("formId");
+		ID.value = id;
+		form.action = "${pageContext.request.contextPath}/dev/flatform/app/delete";
+		form.submit();
+	}
+	function viewAppInfo(form, id) {
+		var ID = document.getElementById("formId");
+		ID.value = id;
+		form.action = "${pageContext.request.contextPath}/dev/flatform/app/viewAppInfo";
+		form.submit();
+	}
+	function modifyVersion(form, id, versionId, status, statusName) {
+		if (versionId === '0'){
+			window.alert("还没有最新版本信息，请先新增一个最新版本！");
+			return;
+		}else if (status === '2' || status === '4' || status === '5'){
+			window.alert("应用状态为【"+statusName+"】，不可修改最新版本信息！");
+			return;
+		}
+		var ID = document.getElementById("formId");
+		ID.value = id;
+		form.action = "${pageContext.request.contextPath}/dev/flatform/app/modifyVersion";
+		form.submit();
+	}
+	function addVersion(form, id) {
+		var ID = document.getElementById("formId");
+		ID.value = id;
+		form.action = "${pageContext.request.contextPath}/dev/flatform/app/addversion";
+		form.submit();
+	}
+	function modifyApp(form, id, status, statusName) {
+		if (status !== '1' && status !== '3'){
+			window.alert("该应用的状态为【"+statusName+"】，不可修改！");
+			return;
+		}
+		var ID = document.getElementById("formId");
+		ID.value = id;
+		form.action = "${pageContext.request.contextPath}/dev/flatform/app/modifyApp";
+		form.submit();
+	}
+
+	function page_nav(form, pageNum){
+		form.action = pageNum;
+		form.submit();
+	}
+
+	window.onload = function (){
+		//获取下拉菜单
+		var select1 = document.getElementById("queryCategoryLevel1");
+		var select2 = document.getElementById("queryCategoryLevel2");
+		var select3 = document.getElementById("queryCategoryLevel3");
+		select1.onchange = function(){if (select1.value != '')select1Ajax();}
+		select2.onchange = function(){if (select2.value != '')select2Ajax();}
+		var s1Value = select1.value;
+		var s2Value = select2.value;
+		select2.onclick = function() {
+			var s2Value2 = select2.value;
+			//console.log("原"+s2Value+"现"+s2Value2);
+			if ((s2Value2 != s2Value && s2Value != '') || s2Value2 == '')
+				selectClearChildren(select3);
+		};
+		select1.onclick = function() {
+			var s1Value1 = select1.value;
+			//console.log("原"+s1Value+"现"+s1Value1);
+			if ((s1Value1 != s1Value && s1Value != '') || s1Value1 == ''){
+				selectClearChildren(select2);
+				selectClearChildren(select3);
+			}
+		};
+
+		function select1Ajax(){
+			var options=$("#queryCategoryLevel1 option:selected");//获取第一个下拉菜单的值
+			var ops = document.getElementById("queryCategoryLevel1");
+			//jQuery的ajax内容：
+			$.ajax({
+				contentType:"json",
+				/*data: {"parentId":options.val()},*/
+				data:{"parentId":ops.value},
+				url:"nlc",
+				success:function(data){
+					//根据data的类型决定是否转换成JSON，似乎不用转换（好像自动转好了）
+					var categoryLevel2List = typeof data == 'string'?JSON.parse(data):data;
+					//清空第二个下拉菜单的选项
+					selectClearChildren(select2);
+					//创建选项
+					var element = document.createElement("option");
+					element.innerHTML="--请选择--";
+					element.setAttribute("value","");
+					select2.append(element);
+					for (var i = 0; i < categoryLevel2List.length; i++) {
+						var newEle = document.createElement("option");
+						newEle.innerHTML = categoryLevel2List[i].categoryName;//选项的文本
+						newEle.setAttribute("value",categoryLevel2List[i].id)//选项的value，不要写成id了
+						select2.appendChild(newEle);
+					}
+				}});//下方雷同
+		}
+		function select2Ajax() {
+			var options=$("#queryCategoryLevel2 option:selected");
+			$.ajax({
+				contentType:"json",
+				data: {"parentId":options.val()},
+				url:"nlc",
+				success:function(data){
+					var categoryLevel3List = typeof data == 'string'?JSON.parse(data):data;
+					selectClearChildren(select3);
+					var element = document.createElement("option");
+					element.setAttribute("value","");
+					element.innerHTML="--请选择--";
+					select3.append(element);
+					for (var i = 0; i < categoryLevel3List.length; i++) {
+						var newEle = document.createElement("option");
+						newEle.innerHTML = categoryLevel3List[i].categoryName;
+						newEle.setAttribute("value",categoryLevel3List[i].id)
+						select3.appendChild(newEle);
+					}
+				}});
+		}
+		function selectClearChildren (select) {
+			var childrens = select.children;
+			if (childrens.length>=1){
+				for (var i = childrens.length-1; i >=0; i--) {
+					select.removeChild((childrens[i]))
+				}}
+		}
+	}
+</script>
 <script src="${pageContext.request.contextPath }/statics/localjs/rollpage.js"></script>
 <script src="${pageContext.request.contextPath }/statics/localjs/appinfolist.js"></script>

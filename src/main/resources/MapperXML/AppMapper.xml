@@ -7,16 +7,17 @@
     <select id="getAppById" resultType="appInfo" parameterType="int">
         select *  from app_info where id = #{id}
     </select>
-
     <select id="getFlatformName" resultType="String" parameterType="appInfo">
         select valueName from data_dictionary d, app_info a where d.valueId = #{flatformId} and d.typeCode = 'APP_FLATFORM' and a.id = #{id}
     </select>
     <select id="getFlatformNameById" parameterType="int" resultType="String">
         select valueName from data_dictionary d where d.valueId = #{flatformId} and d.typeCode = 'APP_FLATFORM'
     </select>
-
-    <select id="selectPlatformDict" resultType="dataDictionary">
+    <select id="selectPlatformDictFlatForm" resultType="dataDictionary">
         select valueName, valueId from data_dictionary where typeCode = 'APP_FLATFORM'
+    </select>
+    <select id="selectPlatformDictStatus" resultType="dataDictionary">
+        select valueName, valueId from data_dictionary where typeCode = 'APP_STATUS'
     </select>
     <select id="selectCategoryLevel1" resultType="appCategory">
         select id, categoryName from app_category where parentId is null
@@ -24,31 +25,36 @@
     <select id="selectNextLevelCategory" resultType="appCategory" parameterType="int">
         select id, categoryName from app_category where parentId = #{parentId}
     </select>
-
     <select id="paramSearchApp" resultType="appInfo" parameterType="Map">
-        select * from app_info
+        select * from app_info ai
         <where>
+            <if test="devId != null and devId != 0 ">
+                and ai.devId = #{devId}
+            </if>
             <if test="softwareName != null and softwareName != ''">
-                and softwareName like concat('%',#{softwareName},'%')
+                and ai.softwareName like concat('%',#{softwareName},'%')
             </if>
             <if test="flatformId != 0 and flatformId != null">
-                and flatformId = #{flatformId}
+                and ai.flatformId = #{flatformId}
+            </if>
+            <if test="status != 0 and status != null">
+                and ai.status = #{status}
             </if>
             <if test="categoryLevel1 != null and categoryLevel1 != 0">
-                and categoryLevel1 = #{categoryLevel1}
+                and ai.categoryLevel1 = #{categoryLevel1}
             </if>
             <if test="categoryLevel2 != null and categoryLevel2 != 0">
-                and categoryLevel2 = #{categoryLevel2}
+                and ai.categoryLevel2 = #{categoryLevel2}
             </if>
             <if test="categoryLevel3 != null and categoryLevel3 != 0">
-                and categoryLevel3 = #{categoryLevel3}
+                and ai.categoryLevel3 = #{categoryLevel3}
             </if>
         </where>
          <if test="start != null and size != null">
             limit #{start}, #{size}
          </if>
+        order by id desc
     </select>
-
     <select id="getCategoryName" parameterType="int" resultType="String">
         select categoryName from app_category where id = #{id}
     </select>
@@ -57,34 +63,67 @@
         where ai.status = dd.valueId and dd.typeCode = 'APP_STATUS'
           and ai.id = #{id}
     </select>
-
-    <select id="simpleGetVersion" parameterType="int" resultType="appVersion">
-        select * from app_version where id = #{id}
-    </select>
-
     <select id="getVersionNo" parameterType="int" resultType="String">
         select versionNo from app_version av, app_info ai
         where ai.versionId = av.id and ai.id = #{id}
     </select>
-    
-    <insert id="addApp" parameterType="appInfo">
-        insert into app_info (softwareName, APKName, supportROM, interfaceLanguage, softwareSize, downloads, flatformId,
-                              categoryLevel1, categoryLevel2, categoryLevel3, appInfo, logoLocPath, logoPicPath)
-        values (#{softwareName}, #{APKName}, #{supportROM}, #{interfaceLanguage}, #{softwareSize}, #{downloads}, #{flatformId},
-                #{categoryLevel1}, #{categoryLevel2}, #{categoryLevel3}, #{appInfo}, #{logoLocPath}, #{logoPicPath})
-    </insert>
+    <select id="simpleGetVersion" parameterType="int" resultType="appVersion">
+        select * from app_version where id = #{id}
+    </select>
 
-    <update id="changeApp" parameterType="appInfo">
-        update app_info set softwareName = #{softwareName}, APKName = #{APKName}, supportROM = #{supportROM}, 
-                            interfaceLanguage = #{interfaceLanguage}, softwareSize = #{softwareSize}, downloads = #{downloads}, 
-                            flatformId = #{flatformId}, categoryLevel1 = #{categoryLevel1}, categoryLevel2 = #{categoryLevel2}, 
-                            categoryLevel3 = #{categoryLevel3}, appInfo = #{appInfo}, logoLocPath = #{logoLocPath}, 
-                            logoPicPath = #{logoPicPath}
+    <insert id="addApp" parameterType="Map">
+        insert into app_info (softwareName, APKName, supportROM, interfaceLanguage, softwareSize, downloads, flatformId,
+                              categoryLevel1, categoryLevel2, categoryLevel3, appInfo, logoLocPath, logoPicPath, status, devId)
+        values (#{softwareName}, #{APKName}, #{supportROM}, #{interfaceLanguage}, #{softwareSize}, #{downloads}, #{flatformId},
+                #{categoryLevel1}, #{categoryLevel2}, #{categoryLevel3}, #{appInfo}, #{logoLocPath}, #{logoPicPath}, #{status}, #{devId})
+    </insert>
+    <update id="modifyApp" parameterType="Map">
+        update app_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="softwareName != '' and softwareName != null">
+                softwareName = #{softwareName},
+            </if>
+            <if test="supportROM != '' and supportROM != null">
+                supportROM = #{supportROM},
+            </if>
+            <if test="interfaceLanguage != '' and interfaceLanguage != null">
+                interfaceLanguage = #{interfaceLanguage},
+            </if>
+            <if test="softwareSize != 0 and softwareSize != null">
+                softwareSize = #{softwareSize},
+            </if>
+            <if test="downloads != null">
+                downloads = #{downloads},
+            </if>
+            <if test="flatformId != 0 and flatformId != null">
+                flatformId = #{flatformId},
+            </if>
+            <if test="categoryLevel1 != 0 and categoryLevel1 != null">
+                categoryLevel1 = #{categoryLevel1},
+            </if>
+            <if test="categoryLevel2 != 0 and categoryLevel2 != null">
+                categoryLevel2 = #{categoryLevel2},
+            </if>
+            <if test="categoryLevel2 != 3 or categoryLevel2 != 4 or categoryLevel2 != 19 or categoryLevel2 != 20 or categoryLevel2 != 21 or categoryLevel2 != 22">
+                categoryLevel3 = #{categoryLevel3},
+            </if>
+            <if test="appInfo != '' and appInfo != null">
+                appInfo = #{appInfo},
+            </if>
+            <if test="logoLocPath != '' and logoLocPath != null">
+                logoLocPath = #{logoLocPath},
+            </if>
+            <if test="logoPicPath != '' and logoPicPath != null">
+                logoPicPath = #{logoPicPath},
+            </if>
+
+        </trim>
+        where id = #{id}
     </update>
 
     <insert id="addAppVersion">
-        insert into app_version (appId, versionNo, versionInfo, downloadLink, versionSize, apkLocPath, apkFileName)
-        values (#{appId}, #{versionNo}, #{versionInfo}, #{downloadLink}, #{versionSize}, #{apkLocPath}, #{apkFileName})
+        insert into app_version (appId, versionNo, versionInfo, publishStatus, downloadLink, versionSize, apkLocPath, apkFileName, creationDate, modifyDate)
+        values (#{appId}, #{versionNo}, #{versionInfo}, #{publishStatus}, #{downloadLink}, #{versionSize}, #{apkLocPath}, #{apkFileName}, #{creationDate}, #{modifyDate})
     </insert>
     <select id="getLatestVersion" parameterType="int" resultType="int">
         select id from app_version where appId = #{appId} order by creationDate desc limit 0,1
@@ -92,29 +131,57 @@
     <update id="updateAppVersionId">
         update app_info set versionId = #{versionId} where id = #{id}
     </update>
-
-    <select id="getAppInfo" parameterType="int" resultType="appInfo">
-        select * from app_info where id = #{id}
-    </select>
+    <update id="updateAppVersion" parameterType="Map">
+        update app_version
+        <trim prefix="set" suffixOverrides=",">
+            <if test="versionInfo != '' and versionInfo != null">
+                versionInfo = #{versionInfo},
+            </if>
+            <if test="versionSize != '' and versionSize != null">
+                versionSize = #{versionSize},
+            </if>
+            <if test="apkLocPath != '' and apkLocPath != null">
+                apkLocPath = #{apkLocPath},
+            </if>
+            <if test="apkFileName != '' and apkFileName != null">
+                apkFileName = #{apkFileName},
+            </if>
+            <if test="downloadLink != '' and downloadLink != null">
+                downloadLink = #{downloadLink},
+            </if>
+            <if test="modifyDate != '' and modifyDate != null">
+                modifyDate = #{modifyDate},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
 
     <delete id="deleteAppInfo" parameterType="int">
         delete from app_info where id = #{id}
     </delete>
+    <delete id="deleteAppVersion" parameterType="int">
+        delete from app_version where appId = #{appId}
+    </delete>
 
     <update id="devChangeAppPublishStatus" parameterType="Map">
-        update app_info ai
-        <if test="versionId != null and versionId != 0">
-                , app_version av
-            </if>
-            set ai.status = #{status}
-        <if test="publishStatus != null and publishStatus != 0">
-            , av.publishStatus = #{publishStatus}
-        </if>
-        where ai.id = #{id}
+        update app_info ai set ai.status = #{status} where ai.id = #{id}
     </update>
 
     <update id="backendChangeAppStatus" parameterType="Map">
         update app_info set status = #{status} where id = #{id}
     </update>
-    
+
+    <select id="checkAppName" parameterType="String" resultType="int">
+        select count(id) from app_info where APKName = #{APKName}
+    </select>
+
+    <select id="getAppVersionList" parameterType="int" resultType="appVersion">
+        select * from app_version where appId = #{appId}
+    </select>
+    <select id="getPublishStatusName" parameterType="int" resultType="String">
+        select valueName from data_dictionary where typeCode = 'PUBLISH_STATUS' and valueId = #{valueId}
+    </select>
+    <select id="getAppName" parameterType="int" resultType="String">
+        select softwareName from app_info where id = #{id}
+    </select>
 </mapper>

@@ -11,4 +11,8 @@
     <select id="getDevName" resultType="String">
         select devName from dev_user where devCode = #{devCode}
     </select>
+
+    <select id="getDevId" resultType="int">
+        select id from dev_user where devCode = #{devCode}
+    </select>
 </mapper>

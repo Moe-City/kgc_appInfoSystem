@@ -127,8 +127,8 @@
             <input type="hidden" id="downloadLink" name="downloadLink" value="${appVersion.downloadLink}"/>
             <input type="hidden" id="apkLocPath" name="apkLocPath" value="${appVersion.apkLocPath}"/>
             <input type="hidden" id="apkFileName" name="apkFileName" value="${appVersion.apkFileName}"/>
-			<div id="uploadfile" style="display: none">
-				<input id="attach" type="file" class="form-control col-md-7 col-xs-12" name="attach">
+			<div id="uploadfile">
+				<input id="attach" type="file" class="form-control col-md-7 col-xs-12" name="attach" accept=".apk">
 				<p><span style="color:red;font-weight: bold;">*注：1、大小不得超过500m.2、文件类型：apk</span></p>
 			</div>
 			<div id="apkFile"></div>
@@ -139,7 +139,7 @@
           <div class="form-group">
             <div class="col-md-6 col-md-offset-3">
               <button id="send" type="submit" class="btn btn-success">保存</button>
-              <button type="button" class="btn btn-primary" id="back">返回</button>
+              <button type="button" class="btn btn-primary" id="back" onclick="window.history.back()">返回</button>
             </div>
           </div>
           <div class="clearfix"></div>

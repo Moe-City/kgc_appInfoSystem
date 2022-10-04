@@ -20,4 +20,9 @@ public class DevUserServiceImpl implements DevUserService {
     public String getDevName(String devCode) {
         return devUserMapper.getDevName(devCode);
     }
+
+    @Override
+    public int getDevId(String devCode) {
+        return devUserMapper.getDevId(devCode);
+    }
 }

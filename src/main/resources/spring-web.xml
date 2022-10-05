@@ -23,7 +23,8 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <!-- 配置拦截器作用的路径 -->
-            <mvc:mapping path="/**"/>
+            <mvc:mapping path="/**/dev/**"/>
+            <mvc:mapping path="/**/manage/**"/>
             <bean class="com.appInfoSystem.util.userInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>
